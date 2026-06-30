@@ -31,6 +31,7 @@ Copy `config.ini.template` to `config.ini` and configure the following sections:
   - `backup_retention_days`: number of days to retain backups locally
   - `backup_path`: local directory where backup files are saved
   - `backup_log`: logfile name for console and file logging (for example, `backup.log`)
+  - `backup_log_level`: logging verbosity, such as `DEBUG`, `INFO`, `WARNING`, `ERROR`, or `CRITICAL`
 - `Files`
   - `webspace_path`: remote POSIX base path for the Joomla installation
   - `joomla_path`: Joomla folder path under `webspace_path` on the remote host

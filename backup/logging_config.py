@@ -2,9 +2,9 @@ import logging
 from pathlib import Path
 
 
-def configure_logging(log_file: Path):
+def configure_logging(log_file: Path, log_level: int = logging.INFO):
     root_logger = logging.getLogger()
-    root_logger.setLevel(logging.INFO)
+    root_logger.setLevel(log_level)
 
     formatter = logging.Formatter(
         "%(asctime)s %(levelname)s %(name)s: %(message)s",

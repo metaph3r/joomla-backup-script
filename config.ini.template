@@ -4,6 +4,7 @@ backup_user = ssh_user
 backup_retention_days = 30
 backup_path = C:\backups\joomla_site
 backup_log = backup.log
+backup_log_level = INFO
 
 [Files]
 webspace_path = /var/www/html

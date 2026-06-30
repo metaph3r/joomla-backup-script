@@ -12,10 +12,10 @@ def get_backup_config_filepath() -> Path:
     return config_file_path
 
 if __name__ == "__main__":
+    logger = logging.getLogger(__name__)
     try:
         backup_config = config.BackupConfig(get_backup_config_filepath())
-        configure_logging(backup_config.backup_path / backup_config.backup_log)
-        logger = logging.getLogger(__name__)
+        configure_logging(backup_config.backup_path / backup_config.backup_log, backup_config.backup_log_level)
         joomla_backup = backup.JoomlaBackup(backup_config)
         joomla_backup.run_backup()
     except Exception as e:

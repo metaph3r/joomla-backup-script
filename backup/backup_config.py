@@ -1,5 +1,6 @@
 import configparser
 import datetime
+import logging
 from pathlib import Path, PurePosixPath
 
 def get_datetime_string() -> str:
@@ -12,6 +13,7 @@ class BackupConfig:
     backup_retention_days: int
     backup_path: Path
     backup_log: str
+    backup_log_level: int
     webspace_path: Path
     joomla_path: Path
     joomla_backup_filename: str
@@ -34,6 +36,10 @@ class BackupConfig:
         self.backup_retention_days = config.getint("General", "backup_retention_days")
         self.backup_path = Path(config.get("General", "backup_path")).expanduser()
         self.backup_log = config.get("General", "backup_log")
+        log_level_name = config.get("General", "backup_log_level", fallback="INFO").strip().upper()
+        self.backup_log_level = getattr(logging, log_level_name, None)
+        if self.backup_log_level is None:
+            raise ValueError(f"Unsupported log level: {log_level_name}")
         self.webspace_path = PurePosixPath(config.get("Files", "webspace_path"))
         self.joomla_path = PurePosixPath(config.get("Files", "joomla_path"))
         self.joomla_backup_filename = f"{get_datetime_string()}_{config.get('Files', 'backup_filename_suffix')}"
