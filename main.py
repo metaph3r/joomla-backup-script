@@ -16,3 +16,4 @@ if __name__ == "__main__":
         joomla_backup.run_backup()
     except Exception as e:
         print(f"Error occurred: {e}")
+        exit(1)
