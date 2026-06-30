@@ -18,13 +18,15 @@ class BackupConfig:
     db_name: str
     db_backup_filename: str
 
-    def __init__(self, config_file: str):
+    def __init__(self, config_file: Path):
+        if not config_file.exists():
+            raise FileNotFoundError(f"Config file {config_file} does not exist.")
+
         config = configparser.ConfigParser()
         try:
             config.read(config_file)
         except Exception as e:
-            print(f"Error reading config file: {e}")
-            exit(1)
+            raise RuntimeError(f"Error reading config file: {e}")
 
         self.backup_host = config.get("General", "backup_host")
         self.backup_user = config.get("General", "backup_user")

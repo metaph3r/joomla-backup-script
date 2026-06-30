@@ -32,7 +32,7 @@ class JoomlaBackup:
             end_time = time.perf_counter()
             print(f"{type.value.capitalize()} backup completed successfully as {path / file} in {end_time - start_time:.2f} seconds.")
         except subprocess.CalledProcessError as e:
-            print(f"Error during backup: {e.stderr.decode()}")
+            raise RuntimeError(f"Error during backup: {e.stderr.decode()}")
 
     def _backup_files(self):
         remote_webspace_path = shlex.quote(str(self._config.webspace_path))
@@ -67,7 +67,7 @@ class JoomlaBackup:
                         print(f"Deleted old backup: {file}")
                         count += 1
                 except Exception as e:
-                    print(f"Failed to delete backup {file}: {e}")
+                    raise RuntimeError(f"Failed to delete backup {file}: {e}")
 
         print(f"Cleanup completed. Deleted {count} old backups.")
 
