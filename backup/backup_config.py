@@ -1,6 +1,6 @@
 import configparser
 import datetime
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 def get_datetime_string() -> str:
     now = datetime.datetime.now()
@@ -29,9 +29,9 @@ class BackupConfig:
         self.backup_host = config.get("General", "backup_host")
         self.backup_user = config.get("General", "backup_user")
         self.backup_retention_days = config.getint("General", "backup_retention_days")
-        self.backup_path = Path(config.get("General", "backup_path"))
-        self.webspace_path = Path(config.get("Files", "webspace_path"))
-        self.joomla_path = Path(config.get("Files", "joomla_path"))
+        self.backup_path = Path(config.get("General", "backup_path")).expanduser()
+        self.webspace_path = PurePosixPath(config.get("Files", "webspace_path"))
+        self.joomla_path = PurePosixPath(config.get("Files", "joomla_path"))
         self.joomla_backup_filename = f"{get_datetime_string()}_{config.get('Files', 'backup_filename_suffix')}"
         self.db_host = config.get("Database", "host")
         self.db_name = config.get("Database", "name")

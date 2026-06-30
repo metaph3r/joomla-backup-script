@@ -1,3 +1,4 @@
+import shlex
 import subprocess
 import time
 from pathlib import Path
@@ -34,16 +35,20 @@ class JoomlaBackup:
             print(f"Error during backup: {e.stderr.decode()}")
 
     def _backup_files(self):
+        remote_webspace_path = shlex.quote(str(self._config.webspace_path))
+        remote_joomla_path = shlex.quote(str(self._config.joomla_path))
         self._execute_backup(
             file=self._config.joomla_backup_filename,
-            command=f"tar -czf - -C {self._config.webspace_path.as_posix()} {self._config.joomla_path.as_posix()}",
+            command=f"tar -czf - -C {remote_webspace_path} {remote_joomla_path}",
             type=BackupType.FILES
         )
 
     def _backup_database(self):
+        db_host = shlex.quote(self._config.db_host)
+        db_name = shlex.quote(self._config.db_name)
         self._execute_backup(
             file=self._config.db_backup_filename,
-            command=f"mysqldump --single-transaction --no-tablespaces -h {self._config.db_host} {self._config.db_name} | gzip -c",
+            command=f"mysqldump --single-transaction --no-tablespaces -h {db_host} {db_name} | gzip -c",
             type=BackupType.DATABASE
         )
 
