@@ -5,8 +5,8 @@ import backup.backup as backup
 CONFIG_FILE = "config.ini"
 
 def get_backup_config_filepath() -> str:
-    current_dir = pathlib.Path(__file__).parent
-    config_file_path = current_dir / CONFIG_FILE    
+    current_dir = pathlib.Path.cwd()
+    config_file_path = current_dir / CONFIG_FILE
     return str(config_file_path)
 
 if __name__ == "__main__":
