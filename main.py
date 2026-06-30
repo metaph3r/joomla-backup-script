@@ -14,7 +14,7 @@ def get_backup_config_filepath() -> Path:
 if __name__ == "__main__":
     try:
         backup_config = config.BackupConfig(get_backup_config_filepath())
-        log_file_path = configure_logging(backup_config.backup_log)
+        configure_logging(backup_config.backup_path / backup_config.backup_log)
         logger = logging.getLogger(__name__)
         joomla_backup = backup.JoomlaBackup(backup_config)
         joomla_backup.run_backup()
