@@ -1,3 +1,4 @@
+import logging
 import shlex
 import subprocess
 import time
@@ -5,6 +6,8 @@ from pathlib import Path
 
 from backup.backup_config import BackupConfig
 from backup.backup_type import BackupType
+
+logger = logging.getLogger(__name__)
 
 class JoomlaBackup:
     def __init__(self, config: BackupConfig):
@@ -14,7 +17,7 @@ class JoomlaBackup:
         host = self._config.backup_host
         user = self._config.backup_user
         path = self._config.backup_path
-        print(f"Backing up {type.value} as {path / file}...")
+        logger.info("Backing up %s as %s...", type.value, path / file)
         try:
             start_time = time.perf_counter()
             result = subprocess.run(
@@ -30,7 +33,7 @@ class JoomlaBackup:
             with open(path / file, "wb") as f:
                 f.write(result.stdout)
             end_time = time.perf_counter()
-            print(f"{type.value.capitalize()} backup completed successfully as {path / file} in {end_time - start_time:.2f} seconds.")
+            logger.info("%s backup completed successfully as %s in %.2f seconds.", type.value.capitalize(), path / file, end_time - start_time)
         except subprocess.CalledProcessError as e:
             raise RuntimeError(f"Error during backup: {e.stderr.decode()}")
 
@@ -57,27 +60,26 @@ class JoomlaBackup:
         cutoff = time.time() - retention_seconds
         backup_path = self._config.backup_path
         count = 0
-        print(f"Cleaning up old backups in {backup_path} older than {self._config.backup_retention_days} days...")
+        logger.info("Cleaning up old backups in %s older than %s days...", backup_path, self._config.backup_retention_days)
 
         for file in backup_path.iterdir():
             if file.is_file() and file.suffix == ".gz":
                 try:
                     if file.stat().st_mtime < cutoff:
                         file.unlink()
-                        print(f"Deleted old backup: {file}")
+                        logger.info("Deleted old backup: %s", file)
                         count += 1
                 except Exception as e:
                     raise RuntimeError(f"Failed to delete backup {file}: {e}")
 
-        print(f"Cleanup completed. Deleted {count} old backups.")
+        logger.info("Cleanup completed. Deleted %s old backups.", count)
 
     def run_backup(self):
         if not self._config.backup_path.exists() or not self._config.backup_path.is_dir():
-            print(f"Backup path does not exist or is not a directory: {self._config.backup_path}")
-            return
+            raise RuntimeError(f"Backup path does not exist or is not a directory: {self._config.backup_path}")
 
-        print(f"Starting backup process for Joomla site at {(self._config.webspace_path / self._config.joomla_path).as_posix()} and database {self._config.db_name}...")
+        logger.info("Starting backup process for Joomla site at %s and database %s...", (self._config.webspace_path / self._config.joomla_path).as_posix(), self._config.db_name)
         self._backup_database()
         self._backup_files()
         self._cleanup()
-        print("Backup process completed successfully.")
+        logger.info("Backup process completed successfully.")

@@ -3,6 +3,7 @@ backup_host = example.ssh.hosting
 backup_user = ssh_user
 backup_retention_days = 30
 backup_path = C:\backups\joomla_site
+backup_log = backup.log
 
 [Files]
 webspace_path = /var/www/html

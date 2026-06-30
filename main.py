@@ -1,6 +1,8 @@
+import logging
 from pathlib import Path
 import backup.backup_config as config
 import backup.backup as backup
+from backup.logging_config import configure_logging
 
 CONFIG_FILE = "config.ini"
 
@@ -11,9 +13,11 @@ def get_backup_config_filepath() -> Path:
 
 if __name__ == "__main__":
     try:
-        backup_config = config.BackupConfig(get_backup_config_filepath()) 
+        backup_config = config.BackupConfig(get_backup_config_filepath())
+        log_file_path = configure_logging(backup_config.backup_log)
+        logger = logging.getLogger(__name__)
         joomla_backup = backup.JoomlaBackup(backup_config)
         joomla_backup.run_backup()
     except Exception as e:
-        print(f"Error occurred: {e}")
+        logger.exception("Error occurred: %s", e)
         exit(1)

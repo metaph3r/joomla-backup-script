@@ -9,6 +9,7 @@ A Python utility to create local backups of a remote Joomla site and its MySQL d
 - dumps the Joomla MySQL database using `mysqldump`
 - compresses the backups and stores them locally
 - removes old `.gz` backups after the configured retention period
+- writes progress and errors to both the console and a logfile
 
 ## Requirements
 
@@ -22,15 +23,14 @@ A Python utility to create local backups of a remote Joomla site and its MySQL d
 
 ## Configuration
 
-Copy `config.ini.template` to `config.ini` in the project root and update the example values with your site-specific settings.
-
-The template includes meaningful placeholder values for each section:
+Copy `config.ini.template` to `config.ini` and configure the following sections:
 
 - `General`
   - `backup_host`: SSH host to connect to
   - `backup_user`: SSH user to connect as
   - `backup_retention_days`: number of days to retain backups locally
   - `backup_path`: local directory where backup files are saved
+  - `backup_log`: logfile name for console and file logging (for example, `backup.log`)
 - `Files`
   - `webspace_path`: remote POSIX base path for the Joomla installation
   - `joomla_path`: Joomla folder path under `webspace_path` on the remote host
@@ -40,7 +40,7 @@ The template includes meaningful placeholder values for each section:
   - `name`: Joomla database name
   - `backup_filename_suffix`: file suffix for the database backup
 
-The script generates timestamped backup files based on the current date and time.
+The script generates timestamped backup files based on the current date and time. Logs are written to the console and to the logfile specified by `backup_log`, which is created in the project directory when the script runs.
 
 ## Usage
 
