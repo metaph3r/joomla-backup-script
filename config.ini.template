@@ -1,0 +1,19 @@
+[General]
+backup_host = example.ssh.hosting
+backup_user = ssh_user
+backup_retention_days = 30
+backup_path = C:\backups\joomla_site
+
+[Files]
+webspace_path = /var/www/html
+joomla_path = joomla
+; The final Joomla backup filename will have a datetime prefix before this suffix
+; Example: 2026-06-30_12-00-00_joomla_file_backup.tar.gz
+backup_filename_suffix = joomla_file_backup.tar.gz
+
+[Database]
+name = joomla_database
+host = database.local
+; The final database backup filename will have a datetime prefix before this suffix
+; Example: 2026-06-30_12-00-00_joomla_db_backup.sql.gz
+backup_filename_suffix = joomla_db_backup.sql.gz
