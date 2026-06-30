@@ -29,7 +29,7 @@ class JoomlaBackup:
             with open(path / file, "wb") as f:
                 f.write(result.stdout)
             end_time = time.perf_counter()
-            print(f"{type.value.capitalize()} backup completed successfully as {path / file} in {end_time - start_time:.2f} seconds")
+            print(f"{type.value.capitalize()} backup completed successfully as {path / file} in {end_time - start_time:.2f} seconds.")
         except subprocess.CalledProcessError as e:
             print(f"Error during backup: {e.stderr.decode()}")
 
@@ -47,6 +47,32 @@ class JoomlaBackup:
             type=BackupType.DATABASE
         )
 
+    def _cleanup(self):
+        retention_seconds = self._config.backup_retention_days * 24 * 60 * 60
+        cutoff = time.time() - retention_seconds
+        backup_path = self._config.backup_path
+        count = 0
+        print(f"Cleaning up old backups in {backup_path} older than {self._config.backup_retention_days} days...")
+
+        for file in backup_path.iterdir():
+            if file.is_file() and file.suffix == ".gz":
+                try:
+                    if file.stat().st_mtime < cutoff:
+                        file.unlink()
+                        print(f"Deleted old backup: {file}")
+                        count += 1
+                except Exception as e:
+                    print(f"Failed to delete backup {file}: {e}")
+
+        print(f"Cleanup completed. Deleted {count} old backups.")
+
     def run_backup(self):
+        if not self._config.backup_path.exists() or not self._config.backup_path.is_dir():
+            print(f"Backup path does not exist or is not a directory: {self._config.backup_path}")
+            return
+
+        print(f"Starting backup process for Joomla site at {(self._config.webspace_path / self._config.joomla_path).as_posix()} and database {self._config.db_name}...")
         self._backup_database()
         self._backup_files()
+        self._cleanup()
+        print("Backup process completed successfully.")
